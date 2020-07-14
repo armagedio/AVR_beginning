@@ -1,0 +1,38 @@
+/*
+ * przetwornik.c
+ *
+ * Created: 2019-05-22 09:07:44
+ * Author : admin
+ */ 
+
+#include <avr/io.h>
+
+void diody(char liczba)
+{
+	char temp=liczba & 0b11000000; 
+	PORTC = PORTC & 0b00111111;
+	PORTC=PORTC|temp;
+	liczba=liczba<<2;
+	PORTD= PORTD & 0b00000011;
+	PORTD=liczba + PORTD;
+}
+
+int main(void)
+{
+	DDRD=0b11111111;
+	DDRC=0b11111111;
+	DDRB=0b11110000;
+	
+	ADMUX = 0b01100000;
+	ADCSRA=0b10000000;
+	
+    while (1) 
+    {
+		ADCSRA|=0b01000000;
+		while(!(ADCSRA & 0b00010000)==0)
+		{							
+		}
+			diody(ADCH);
+    }
+}
+

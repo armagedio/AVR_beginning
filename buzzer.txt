@@ -1,0 +1,50 @@
+/*
+ * dzwieki.c
+ *
+ * Created: 2019-05-15 08:57:46
+ * Author : admin
+ */ 
+
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
+
+int main(void)
+{
+	sei();
+	TIMSK = (1<<TOIE1);
+	TCCR1B = (1<<CS12);
+	
+	//DDRD = 0b11111111;
+	//PORTD = 0b11111111;
+	DDRB=0b11110000; 
+	TCNT1 = 65429; //62500 bo jedna sekunda podzielone na czestotliwosc np 293,7 wynik dzielimy na 2 bo pol bo pol sygnal jest wylaczony a pol wlaczony, a potem 65535 - cos tam co wyszlo na 2, wpisujemy do TCNT1
+	volatile int a;
+	
+	while (1)
+	{
+if(!(PINB & 0b00000010))
+		{
+			
+		}
+		else if(!(PINB & 0b00000001))
+		{
+			
+		}
+		
+	}
+}
+ISR(TIMER1_OVF_vect)
+{
+	PORTB = PORTB^(1<<PB5);
+	TCNT1= 65429;
+	//PORTD = PORTD^0b11111111; //xor ^
+}
+
+
+
+
+
+
+
+

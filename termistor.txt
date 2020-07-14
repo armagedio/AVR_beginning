@@ -1,0 +1,101 @@
+//***************** (c) 2008 BTC Korporacja ***********************************
+//                     http://www kamami.com
+// PROJECT  : CHAR LCD
+// BOARD    : ZL15AVR (with ATmega32 in socket U1)
+// COMPILER : WinAVR 20080610
+//
+//******************************************************************************
+//
+//    THE SOFTWARE INCLUDED IN THIS FILE IS FOR GUIDANCE ONLY.
+//    BTC KORPORACJA SHALL NOT BE HELD LIABLE FOR ANY DIRECT, INDIRECT
+//    OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
+//    FROM USE OF THIS SOFTWARE.
+//
+//******************************************************************************
+//
+// DESCRIPTION :
+//    Using LCD character display (HD44780 compatible) in 4-bit mode.
+//
+//    Settings and connections on ZL15AVR:
+//        JP4 (DISPLAY) - 2-3 (=CHAR)
+//
+//        D4 (LCD_CHAR/con13) - PD4 (con18)
+//        D5 (LCD_CHAR/con13) - PD5 (con18)
+//        D6 (LCD_CHAR/con13) - PD6 (con18)
+//        D7 (LCD_CHAR/con13) - PD7 (con18)
+//        E  (LCD_CHAR/con13) - PB2 (con16)
+//        RS (LCD_CHAR/con13) - PB0 (con16)
+//        RW (LCD_CHAR/con13) - GND (con15)
+//
+//
+//******************************************************************************
+#ifndef F_CPU  
+  #define F_CPU   16000000    // 16 MHz - turn on external resonator (fuse bits)
+#endif
+
+#include <avr/io.h>
+#include <util/delay.h>
+#include "HD44780.h"
+//-------------------------------------
+// main program
+//-------------------------------------
+
+void diody(char liczba)
+{
+	char temp=liczba & 0b11000000;
+	PORTC = PORTC & 0b00111111;
+	PORTC=PORTC|temp;
+	liczba=liczba<<2;
+	PORTD= PORTD & 0b00000011;
+	PORTD=liczba + PORTD;
+}
+
+int main(void)
+{
+//char temp;
+//char i;
+//char a;
+
+LCD_Initialize();
+
+//LCD_GoTo(0,0);// kolumna , wiersz
+//LCD_WriteText(" -- ZL15AVR  ZL15AVR --");
+//LCD_GoTo(0,1); //kolumna 0 wiersz 1
+//LCD_WriteText(" Wojtek");
+
+DDRD=0b11111111;
+DDRC=0b11111111;
+DDRB=0b11110000;
+
+ADMUX = 0b01100001;
+ADCSRA=0b10000000;
+
+char tab[10];
+char tab2[10];
+
+//int wynik;
+float temperatura;
+float napiecie;
+while (1)
+{
+	ADCSRA|=0b01000000; //rozpoczyna konwersje
+	while(!(ADCSRA & 0b00010000)==0) //sprawdza czy konwersja jest zakonczona
+	{
+	}
+	LCD_GoTo(0,0);
+	LCD_WriteText("Napie = ");
+	napiecie = ADCH*0.0195; //((ADCH*4)/1024)*5=test  ADCH ma warotosci 0 255 dlatego mnozymy razy 4 zeby mialo wartosci 0 1024 potem jaka to czesc np 825/1024 i na koncu razy 5vlotow
+	dtostrf(napiecie,3,3,tab);//wartosc int, dlugosc ,precyzja ,gdzie wpisujemy
+	temperatura = 25.6*napiecie;
+	dtostrf(temperatura,3,3,tab2);
+	LCD_WriteText(tab);
+	LCD_GoTo(0,1);
+	LCD_WriteText("Temper = ");
+	LCD_WriteText(tab2);
+	
+}
+return 0;
+}
+//-------------------------------------
+// End of file
+//-------------------------------------

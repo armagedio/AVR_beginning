@@ -1,0 +1,67 @@
+/*
+ * cJEDYNECZKA.c
+ *
+ * Created: 2019-04-10 08:59:41
+ * Author : admin
+ */ 
+
+#include <avr/io.h>
+#include <util/delay.h>
+
+
+void diody(char liczba)
+{
+	char temp=liczba & 0b11000000; //
+	PORTC = PORTC & 0b00111111;
+	PORTC=PORTC|temp;
+	liczba=liczba<<2;
+	PORTD= PORTD & 0b00000011;	
+	PORTD=liczba + PORTD;	
+}
+
+
+
+int main(void)
+{
+	DDRD=0b11111111;
+	DDRC=0b11111111;
+	DDRB=0b11110000;
+	diody(0b11011101);
+	
+	
+	char liczba = 1;
+	/*
+		
+    while (1) 
+    {
+		if(!(PINB & 0b00000010))
+		{
+			if(PORTD==0b10000000)
+			{
+				PORTD=4;
+				_delay_ms(a);
+			}
+			else
+			{
+				PORTD=PORTD*2;
+				_delay_ms(a);
+			}
+		}
+		else if(!(PINB & 0b00000001))
+		{
+			if(PORTD==4)
+			{
+				PORTD=128;
+				_delay_ms(a);
+			}
+			else
+			{
+				PORTD=PORTD/2;
+				_delay_ms(a);
+			}
+		}
+		
+		
+	}*/
+}
+

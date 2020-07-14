@@ -1,0 +1,50 @@
+/*
+ * cJEDYNECZKA.c
+ *
+ * Created: 2019-04-10 08:59:41
+ * Author : admin
+ */ 
+
+#include <avr/io.h>
+#include <util/delay.h>
+
+int main(void)
+{
+	int a=300;
+	DDRD=0b11111111;
+	DDRB=0b11110000;
+    PORTD=4;
+	
+    while (1) 
+    {
+		if(!(PINB & 0b00000010))
+		{
+			if(PORTD==0b10000000)
+			{
+				PORTD=4;
+				_delay_ms(a);
+			}
+			else
+			{
+				PORTD=PORTD*2;
+				_delay_ms(a);
+			}
+		}
+		else if(!(PINB & 0b00000001))
+		{
+			if(PORTD==4)
+			{
+				PORTD=128;
+				_delay_ms(a);
+			}
+			else
+			{
+				PORTD=PORTD/2;
+				_delay_ms(a);
+			}
+		}
+		
+		
+	}
+}
+

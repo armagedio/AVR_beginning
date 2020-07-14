@@ -1,0 +1,26 @@
+int main(void)
+{
+char i,j, B1;
+char str[5];
+DDRD = 0xFF;
+
+TWI_Init();
+
+
+// Infinite loop
+do{
+TWI_Start();                                    // start transmission
+TWI_Write(0xD0);                                // write addres of M41T00
+TWI_Write(0x00);                                // select first register
+TWI_Start();                                    // repeated start
+TWI_Write(0xD1);                                // write address for reading data
+
+
+TWI_Stop();                                     // stop transmission
+//petla zamienaijaca
+
+for(j = 0; j < 20; j++)                         //
+  _delay_ms(10);                                // wait 200 miliseconds
+}while(1);
+return 0;
+}

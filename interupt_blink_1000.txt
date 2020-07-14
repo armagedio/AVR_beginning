@@ -1,0 +1,33 @@
+/*
+ * cPrzerwanie.c
+ *
+ * Created: 2019-05-08 09:14:06
+ * Author : admin
+ */ 
+
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
+
+int main(void)
+{
+	sei();
+	TIMSK = (1<<TOIE1);
+	TCCR1B = (1<<CS12);
+	//TCNT1= 16 000 000 bo 16MHz, dzielimy na 256 bo taki preskaler to daje 62500( to jest rowna sekunda), 65535-625000 = 3035 z takiej wartosci musi starowac zeby byla rowna sekunda, 65535 bo 16 bitowy 
+	TCNT1=34285;
+	DDRD = 0b11111111;
+		
+  	
+	while (1) 
+    {
+
+		
+    }
+}
+ISR(TIMER1_OVF_vect)
+	{
+		TCNT1=34285;
+		PORTD = PORTD^0b11111111; //xor ^
+	}
+

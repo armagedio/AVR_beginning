@@ -1,0 +1,45 @@
+/*
+ * spi.c
+ *
+ * Created: 2019-06-12 09:32:36
+ * Author : admin
+ */ 
+
+#ifndef F_CPU
+#define F_CPU   16000000    // 16 MHz - turn on external resonator (fuse bits)
+#endif
+
+#include <avr/io.h>
+#include <util/delay.h>
+#include "HD44780.h"
+#include "SPI.h"
+
+char T1;
+char T2;
+signed int wynik;
+float wynikf;
+char tab[10];
+
+int main(void)
+{	  /* Replace with your application code */	
+	  
+	    LCD_Initialize();	  
+		SPI_Init(); 	
+    while (1) 
+    {		
+		PORTB&=0b11101111;// ustwaienie CS-chip select na 0  
+		T2=SPI_Transmit(0); // osiem starszych bitow
+		T1=SPI_Transmit(0); // oseim mlodszych bitow ten czujnik jesat 16 bitowy 
+		PORTB|=0b00010000;
+		
+		wynik = (T2<<8) + T1;//przesuniecie o 8 by 16 bitow wchodzilo do jednej zmienej
+		wynik = wynik>>3; //przesuniecie o 3 bo korzystamy tylko z 13 a nie 16 bitow
+		wynikf = wynik*0.0625; // przepisanie do float + skalowanie 
+		dtostrf(wynikf,3,3,tab);	
+		LCD_GoTo(0,0);
+		LCD_WriteText(tab);	
+    }
+	//PB4 CS
+	//TC77 odczytujemy 16 bitow, 13 najstarszych bitow i potem przemanzamy przez 0,0625 bo taki ma ten czujnik krok dla stopnia
+}
+
